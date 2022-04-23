@@ -67,7 +67,7 @@ async def main():
                                                   maximum_torque=args.torque,
                                                   query=True
                                                   )
-            data.append((time_since_start, state))
+            data.append((time_since_start, pos, kp_scale, kd_scale, args.torque, state))
             tau = state.values[moteus.Register.TORQUE]
             read_pos = state.values[moteus.Register.POSITION]
             kt = 8.27 / 153
