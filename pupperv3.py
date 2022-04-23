@@ -54,7 +54,11 @@ async def main():
       return
 
     print("Controller: ", controller)
-    data = []
+    data = {}
+    data["time_since_start"] = []
+    data["command"] = []
+    data["moteus_state"] = []
+
     try:
         timestamp_begin_loop = time.time()
         while True:
@@ -67,7 +71,9 @@ async def main():
                                                   maximum_torque=args.torque,
                                                   query=True
                                                   )
-            data.append((time_since_start, pos, kp_scale, kd_scale, args.torque, state))
+            data["time_since_start"].append(time_since_start)
+            data["command"].append((pos, kp_scale, kd_scale, args.torque))
+            data["moteus_state"].append(state)
             tau = state.values[moteus.Register.TORQUE]
             read_pos = state.values[moteus.Register.POSITION]
             kt = 8.27 / 153
