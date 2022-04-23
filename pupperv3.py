@@ -79,7 +79,7 @@ async def main():
             kt = 8.27 / 153
             print(
                 f"Max torque: {args.torque}\t Comm. torque: {tau:0.3f}\tCurrent: {tau / kt:0.2f}\tMotor pos: {read_pos:0.2f}\t Comm pos: {pos:0.2f}\t Time: {time_since_start:0.2f}")
-            await asyncio.sleep(0.01)
+            await asyncio.sleep(0.005)
     finally:
         await controller.set_stop()
         with open("log.pickle", "wb+") as f:
