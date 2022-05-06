@@ -22,7 +22,7 @@ def jump_land(progress,
               jump_duration=0.12,
               damp_duration=0.6,
               reset_duration=0.2,
-              reset_pos=0.3,
+              reset_pos=0.5,
               land_pos=0.8,
               jump_pos=1.4):
     if progress < 0 or progress > 1:
@@ -33,11 +33,11 @@ def jump_land(progress,
         kd_scale = 2
     elif progress < jump_duration + damp_duration:
         pos = land_pos
-        kp_scale = 0.2
-        kd_scale = 2
+        kp_scale = 0.4
+        kd_scale = 4
     else:
         pos = reset_pos
-        kp_scale = 6
+        kp_scale = 3
         kd_scale = 2
 
     return (pos, kp_scale, kd_scale)
@@ -59,6 +59,9 @@ async def main():
     data["command"] = []
     data["moteus_state"] = []
 
+    sum_square_torque = 0
+    count = 0
+
     try:
         timestamp_begin_loop = time.time()
         while True:
@@ -75,10 +78,13 @@ async def main():
             data["command"].append((pos, kp_scale, kd_scale, args.torque))
             data["moteus_state"].append(state)
             tau = state.values[moteus.Register.TORQUE]
+            count+=1
+            sum_square_torque += tau**2
+            rms_torque = (sum_square_torque / count)**0.5
             read_pos = state.values[moteus.Register.POSITION]
             kt = 8.27 / 153
             print(
-                f"Max torque: {args.torque}\t Comm. torque: {tau:0.3f}\tCurrent: {tau / kt:0.2f}\tMotor pos: {read_pos:0.2f}\t Comm pos: {pos:0.2f}\t Time: {time_since_start:0.2f}")
+                f"Max torque: {args.torque}\t Comm. torque: {tau:0.3f}\t RMS torque: {rms_torque:0.2f}\t Current: {tau / kt:0.2f}\tMotor pos: {read_pos:0.2f}\t Comm pos: {pos:0.2f}\t Time: {time_since_start:0.2f}")
             await asyncio.sleep(0.005)
     finally:
         await controller.set_stop()
