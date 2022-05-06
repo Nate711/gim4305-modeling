@@ -19,7 +19,7 @@ def calculate_progress(time_since_start, period):
 
 
 def jump_land(progress,
-              jump_duration=0.12,
+              jump_duration=0.20,
               damp_duration=0.6,
               reset_duration=0.2,
               reset_pos=0.5,
