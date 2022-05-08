@@ -80,7 +80,6 @@ async def main():
             data["command"].append((pos, kp_scale, kd_scale, args.torque))
             data["moteus_state"].append(state)
             tau = state.values[moteus.Register.TORQUE]
-            count += 1
             sum_square_torque += tau**2
             rms_torque = (sum_square_torque / count)**0.5
             read_pos = state.values[moteus.Register.POSITION]
@@ -88,7 +87,7 @@ async def main():
             kt = 8.27 / 153
             if count % 2 == 0:
                 print(
-                    f"Max torque: {args.torque}\tRMS torque: {rms_torque:0.2f}\tComm. torque: {tau:0.3f}\tCurrent: {tau / kt:0.2f}\tTemp: {temp:0.2f}\tMotor pos: {read_pos:0.2f}\t Comm pos: {pos:0.2f}\t Time: {time_since_start:0.2f}")
+                    f"Max torque: {args.torque}\tRMS torque: {rms_torque:0.3f}\tComm. torque: {tau:0.3f}\tCurrent: {tau / kt:0.2f}\tTemp: {temp:0.2f}\tMotor pos: {read_pos:0.2f}\t Comm pos: {pos:0.2f}\t Time: {time_since_start:0.2f}")
             await asyncio.sleep(0.005)
     finally:
         await controller.set_stop()
