@@ -33,11 +33,11 @@ def jump_land(progress,
         kd_scale = 2
     elif progress < jump_duration + damp_duration:
         pos = land_pos
-        kp_scale = 0.4
+        kp_scale = 0.2
         kd_scale = 4
     else:
         pos = reset_pos
-        kp_scale = 3
+        kp_scale = 1
         kd_scale = 2
 
     return (pos, kp_scale, kd_scale)
