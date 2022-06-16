@@ -33,7 +33,7 @@ class TorqueToPD:
 
         self.termination_time = termination_time
 
-    async def __call__(self, t, pos=None):
+    async def __call__(self, t, pos=None, query=False):
         if pos is None:
             state = await self.controller.query()
             pos = state.values[moteus.Register.POSITION]
@@ -43,27 +43,27 @@ class TorqueToPD:
                                                       kp_scale=self.kp_scale,
                                                       kd_scale=self.kd_scale,
                                                       maximum_torque=self.maximum_torque,
-                                                      query=True)
+                                                      query=query)
         elif pos < self.pd_begin and not self.past_pd_threshold:
             return await self.controller.set_position(maximum_torque=self.maximum_torque,
                                                       kp_scale=0.0,
                                                       kd_scale=0.0,
                                                       feedforward_torque=self.torque,
-                                                      query=True)
+                                                      query=query)
         elif t < self.t_reset:
             self.past_pd_threshold = True
             return await self.controller.set_position(position=self.pd_target,
                                                       kp_scale=self.kp_scale,
                                                       kd_scale=self.kd_scale,
                                                       maximum_torque=self.maximum_torque,
-                                                      query=True
+                                                      query=query
                                                       )
         elif t < self.termination_time:
             return await self.controller.set_position(position=self.reset_position,
                                                       kp_scale=self.kp_scale,
                                                       kd_scale=self.kd_scale,
-                                                      maximum_torque=self.reset_torque,
-                                                      query=True
+                                                      maximum_torque=min(self.reset_torque, self.maximum_torque),
+                                                      query=query
                                                       )
         else:
             return await self.controller.set_stop()

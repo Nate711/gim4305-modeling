@@ -31,7 +31,9 @@ class MultiServo:
         return results
 
 
-def print_states(states, position=True, velocity=True, torque=True, fault=True):
+def print_states(states, position=True, velocity=True, torque=True, fault=True, time_elapsed=None):
+    if time_elapsed is not None:
+        print(f"{time_elapsed:0.4f}", end=" ")
     for id, state in states.items():
         p = state.values[moteus.Register.POSITION]
         v = state.values[moteus.Register.VELOCITY]

@@ -53,11 +53,15 @@ async def main():
             #                                            maximum_torque=args.torque,
             #                                            query=False)
 
+            data.append((time_since_start, state))
+
             # Maybe different
             time.sleep(0.005)
 
     finally:
         await three_dof_leg.stop_all()
+        with open("log.pickle", "wb+") as f:
+            pickle.dump(data, f)
 
 
 if __name__ == '__main__':
